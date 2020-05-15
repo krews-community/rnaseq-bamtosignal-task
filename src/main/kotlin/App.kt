@@ -10,30 +10,28 @@ import util.CmdRunner
 fun main(args: Array<String>) = Cli().main(args)
 
 class Cli : CliktCommand() {
-    private val bamFile: Path by option("-bamFile", help = "path to bam file")
-            .path(exists = true).required()
 
-    private val chromSizes:Path by option("-chromSizes", help = "path to chrom sizes file")
-            .path(exists = true).required()
+    private val bam: Path by option("--bam", help = "path to BAM file to convert")
+        .path(exists = true).required()
+    private val chromosomeSizes: Path by option("--chromosome-sizes", help = "path to a TSV file containing chromosome names and sizes")
+        .path(exists = true).required()
+    private val stranded: Boolean by option("--stranded",help = "strandedness").flag()
 
-    private val strandedness:String by option("-strandedness",help = "strandedness").choice("Stranded", "Unstranded").required()
-    private val outputPrefix: String by option("-outputPrefix", help = "output file name prefix; defaults to 'output'").default("output")
-    private val outDir by option("-outputDir", help = "path to output Directory")
+    private val outputPrefix: String by option("--output-prefix", help = "output file name prefix; defaults to 'output'")
+        .default("output")
+    private val outputDirectory: Path by option("--output-directory", help = "path to output directory")
         .path().required()
 
     override fun run() {
-        val cmdRunner = DefaultCmdRunner()
-        cmdRunner.runTask(bamFile,chromSizes,strandedness,outDir,outputPrefix)
+        DefaultCmdRunner().bamtosignal(
+            SignalParameters(
+                bam = bam,
+                chromosomeSizes = chromosomeSizes,
+                stranded = stranded,
+                outputPrefix = outputPrefix,
+                outputDirectory = outputDirectory
+            )
+        )
     }
-}
 
-/**
- * Runs pre-processing and bwa for raw input files
- *
- * @param taFiles pooledTa Input
- * @param outDir Output Path
- */
-fun CmdRunner.runTask(bamFile:Path,chromSizes:Path,strandedness:String, outDir:Path,outputPrefix:String) {
-
-    bamtosignal(bamFile,chromSizes,strandedness,outDir,outputPrefix)
 }

@@ -8,8 +8,8 @@ plugins {
 }
 
 group = "com.genomealmanac.rnaseq"
-version = "1.0.0"
-val artifactID = "rnaseq-bamtosignal"
+version = "1.0.1"
+val artifactID = "rnaseq-bam-to-signal"
 
 repositories {
     mavenCentral()

@@ -1,6 +1,8 @@
 package testutil
 
+import java.security.MessageDigest
 import java.nio.file.*
+import java.io.File
 import util.CmdRunner
 import util.*
 
@@ -8,8 +10,7 @@ val cmdRunner = TestCmdRunner()
 
 class TestCmdRunner : CmdRunner {
     override fun run(cmd: String) = exec("docker", "exec", "rnaseq-bamtosignal-base", "sh", "-c", cmd)
-    override fun runCommand(cmd: String):String? = getCommandOutput("docker", "exec", "rnaseq-bamtosignal-base", "sh", "-c", cmd)
-
+    override fun runCommand(cmd: String): String? = getCommandOutput("docker", "exec", "rnaseq-bamtosignal-base", "sh", "-c", cmd)
 }
 
 fun copyDirectory(fromDir: Path, toDir: Path) {
@@ -23,18 +24,17 @@ fun copyDirectory(fromDir: Path, toDir: Path) {
 }
 
 fun setupTest() {
-    cleanupTest()
-    // Copy all resource files from "test-input-files" dirs into
-    // docker mounted working /tmp dir
-    copyDirectory(testInputResourcesDir, testInputDir)
+    exec(
+        "docker", "run", "--name", "rnaseq-bamtosignal-base", "--rm", "-i",
+        "-t", "-d", "-v", "${testInputResourcesDir}:${testInputResourcesDir}",
+        "-v", "${testDir}:${testDir}", "genomealmanac/rnaseq-bamtosignal-base"
+    )
 }
 
 fun cleanupTest() {
-    if (Files.exists(testInputDir)) {
+    testDir.toFile().deleteRecursively()
+}
 
-        Files.walk(testInputDir).sorted(Comparator.reverseOrder()).forEach { Files.delete(it) }
-    }
-    if (Files.exists(testOutputDir)) {
-        Files.walk(testOutputDir).sorted(Comparator.reverseOrder()).forEach { Files.delete(it) }
-    }
+fun File.md5(): String {
+    return MessageDigest.getInstance("MD5").digest(this.readBytes()).joinToString("") { "%02x".format(it) }
 }
