@@ -6,7 +6,6 @@ import util.*
 import java.nio.file.*
 import util.CmdRunner
 
-
 fun main(args: Array<String>) = Cli().main(args)
 
 class Cli : CliktCommand() {
