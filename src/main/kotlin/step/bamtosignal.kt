@@ -32,8 +32,8 @@ fun CmdRunner.sortedBedGraph(bedGraph: File): Path {
     return sortedBedGraph
 }
 
-fun emptyBedGraph(chromosomeSizes: Path): File {
-    val f = createTempFile(directory = chromosomeSizes.parent.toFile())
+fun emptyBedGraph(chromosomeSizes: Path, directory: File): File {
+    val f = createTempFile(directory = directory)
     chromosomeSizes.toFile().forEachLine {
         val p = it.split('\t')
         if (p[1].toInt() > 2) f.writeText("${p[0]}\t1\t2\t0.0\n")
@@ -43,7 +43,7 @@ fun emptyBedGraph(chromosomeSizes: Path): File {
 
 fun CmdRunner.bedGraphToBigWig(bedGraph: Path, chromosomeSizes: Path, bigWig: Path) {
     val iBedGraph = if (bedGraph.toFile().length() != 0L) bedGraph.toFile() else (
-        emptyBedGraph(chromosomeSizes)
+        emptyBedGraph(chromosomeSizes, bigWig.parent.toFile())
     )
     val sorted = sortedBedGraph(iBedGraph)
     this.run("""
