@@ -6,16 +6,16 @@ This task provides a convenience wrapper around [STAR](https://github.com/alexdo
 
 We encourage running this task as a Docker image, which is publicly available through GitHub packages. To pull the image, first [install Docker](https://docs.docker.com/engine/install/), then run
 ```
-docker pull docker.pkg.github.com/krews-community/rnaseq-bam-to-signal-task/rnaseq-bam-to-signal:latest
+docker pull docker.pkg.github.com/krews-community/rnaseq-bamtosignal-task/rnaseq-bam-to-signal:latest
 ```
 To generate signal, simply run:
 ```
 docker run \
     --volume /path/to/inputs:/input \
     --volume /path/to/outputs:/output \
-    docker.pkg.github.com/krews-community/rnaseq-bam-to-signal-task/rnaseq-bam-to-signal:latest \
+    docker.pkg.github.com/krews-community/rnaseq-bamtosignal-task/rnaseq-bam-to-signal:latest \
     java -jar /app/bamtosignal.jar --bam /input/test.bam \
-        --chromosomeSizes /input/chrom.sizes \        
+        --chromosome-sizes /input/chrom.sizes \
         --output-directory /output \
         --stranded
 ```
