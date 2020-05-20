@@ -90,12 +90,9 @@ jobs:
           docker push gcr.io/${{ secrets.GCP_PROJECT }}/$IMAGE_NAME:$GITHUB_SHA
 
       # Login to docker hub
-      - name: Login to docker hub
-        uses: actions-hub/docker/login@master
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  
-          
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      
       # Push image to docker hub
       - name: Push image docker hub
         env: 
